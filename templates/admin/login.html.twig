@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+<div class="background-landing"></div>
+<div class="glassy-box">
+    <a class="logo" href="{{ path('landingPage') }}"><img src="{{ asset('assets/brand.png') }}" alt="logo"/></a>
+    <form class="login-form" action="{{ path('app_login') }}" method="post">
+        {% if error %}
+        <p class="info-form">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </p>
+        {% endif %}
+        {% if app.user %}
+                <p class="info-form">
+                Vous êtes identifié en tant que <br/> <span class="fs-1">{{ app.user.userIdentifier }}</span>
+                </p> 
+                <a href="{{ path('adminDashboard') }}" class="btn bg-green">Accès admin</a>
+                <a href="{{ path('app_logout') }}" class="btn bg-red">Se déconnecter</a>
+        {% else %}
+        <input type="text" class="input" id="code" name="code" value="{{ last_username }}" placeholder="identifiant"/>
+        <input type="password" class="input" id="password" name="password" placeholder="mot de passe"/>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button class="btn btn-small bg-green" type="submit">Se connecter</button>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

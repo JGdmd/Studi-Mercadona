@@ -1,0 +1,202 @@
+@mixin responsive($breakpoint) {
+    @if($breakpoint == Phone)  {
+      @media (max-width: 767px) {
+        @content
+      }
+    }
+    @if($breakpoint == Wide)  {
+      @media (min-width: 768px) {
+        @content
+      }
+    }
+  }
+  
+  @mixin flexbox() {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,800;0,900;1,400&display=swap');
+  $text : 'Mulish', sans-serif;
+  $primaryColor : #00AB61;
+  $secondaryColor: #FFA100;
+  $thirdColor: #ff2323;
+  $backgroundColor : #F4F1EC;
+
+
+  body {
+    margin: 0;
+    overflow-y: hidden;
+    font-family: $text;
+    min-width: 300px;
+    min-height: 600px;
+  }
+
+  .header-logo {
+    @include responsive(Wide) {
+        display: none;
+    }
+    padding: 7px 0;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    img {
+        display: block;
+        margin: auto;
+        width: 95%;
+    }
+  }
+
+  .background-landing {
+    background-image: url('../assets/mercadona_background_phone.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    z-index: -1;
+    @include responsive(Wide) {
+        background-image: url('../assets/mercadona_background_desktop.jpg');
+    }
+  }
+
+  .logo {
+    width: 95%;
+    @include responsive(Phone) {
+      display: none;
+    }
+    img {
+      width: 100%;
+      display: block;
+      margin: auto;
+    }
+  }
+
+  .title {
+    text-transform: uppercase;
+    color: $primaryColor;
+    font-weight: 800;
+    font-size: 1.4em;
+    text-align: center;
+    @include responsive(Wide) {
+        color: #FFFFFF;
+    }
+  }
+
+  .glassy-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);  
+    width: 70%;
+    height: 30%;
+    min-height: 185px;
+    max-width: 350px;
+    min-width: 250px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    @include flexbox();
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    @include responsive(Wide) {
+      width: 17%;
+      min-width: 300px;
+      min-height: 250px;
+      max-height: 400px;
+    }
+  }
+
+  .btn {
+    text-decoration: none;
+    padding: 10px 25px;
+    text-transform: uppercase;
+    font-weight: 800;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 5px 15px 0px;
+    color: white;
+    border: none;
+    transition: all ease .3s;
+    margin-top: 10px;
+    outline: none;
+    cursor: pointer;
+    &:hover {
+      box-shadow: none;
+      transition: all ease .3s;
+    }
+  }
+
+  .bg-green {
+    background-color: $primaryColor;
+  }
+
+  .bg-orange {
+    background-color: $secondaryColor;
+  }
+
+  .bg-red {
+    background-color: $thirdColor;
+  }
+
+  .f-green {
+    color: $primaryColor
+  }
+  .f-orange {
+    color: $secondaryColor
+  }
+  .f-red {
+    color: $thirdColor
+  }
+
+  .btn-small {
+    font-size: 1.2em;
+  }
+
+  .btn-large {
+    font-size: 1.8em;
+  }
+
+  .input {
+    border: none;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    width: 70%;
+    height: 10px;
+    margin: 10px auto;
+    border-radius: 7px;
+    text-align: center;
+    font-weight: 800;
+    &::placeholder {
+      color: black;
+    }
+  }
+  
+  .input:focus {
+    outline: none;
+    border: $secondaryColor solid 2px;
+  }
+
+  .login-form {
+    width: 90%;
+    @include flexbox;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .info-form {
+    text-align: center;
+    font-weight: 700;
+    line-height: 150%;
+    margin: 5px auto;
+  }
+
+  .fs-1 {
+    font-size: 1.3em;
+  }

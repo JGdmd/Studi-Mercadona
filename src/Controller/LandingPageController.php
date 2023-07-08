@@ -7,18 +7,22 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LandingPageController extends AbstractController {
 
-    #[Route('/', name:'landingpage')]
+    #[Route('/', name:'landingPage')]
     public function landingPageDisplay()
     {
-        dump('landingPage');
-        die();
+        return $this->render('landingPage.html.twig',
+        [
+            'title' => 'Accueil',
+        ]);
     }
 
     #[Route('/catalog', name:'catalog')]
     public function catalogDisplay()
     {
-        dump('catalogPage');
-        die();
+        return $this->render('landingPage.html.twig',
+        [
+            'title' => 'Catalogue',
+        ]);
     }
 
 }
