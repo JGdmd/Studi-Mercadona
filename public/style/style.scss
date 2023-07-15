@@ -9,6 +9,11 @@
         @content
       }
     }
+    @if($breakpoint == Small)  {
+      @media (max-width: 576px) {
+        @content
+      }
+    }
   }
   
   @mixin flexbox() {
@@ -24,15 +29,21 @@
   $primaryColor : #00AB61;
   $secondaryColor: #FFA100;
   $thirdColor: #ff2323;
-  $backgroundColor : #F4F1EC;
+  $backgroundColor : #f3e5cf;
 
+  html, body {
+    height: 100%;
+  }
 
   body {
     margin: 0;
-    overflow-y: hidden;
     font-family: $text;
     min-width: 300px;
     min-height: 600px;
+    background-color: $backgroundColor;
+    font-size: 12px;
+    @include flexbox;
+    flex-direction: column;
   }
 
   .header-logo {
@@ -41,11 +52,28 @@
     }
     padding: 7px 0;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    background-color: #FFFFFF;
     img {
         display: block;
         margin: auto;
         width: 95%;
     }
+  }
+
+  .logo-desktop {
+    @include responsive(Wide) {
+      display: block;
+      margin: auto;
+      margin-top: 10px;
+      height: 10%;
+      img {
+        background-color: white;
+        display: block;
+        margin: auto;
+        height: 100%;
+      }
+    }
+    display: none;
   }
 
   .background-landing {
@@ -145,13 +173,13 @@
   }
 
   .f-green {
-    color: $primaryColor
+    color: $primaryColor;
   }
   .f-orange {
-    color: $secondaryColor
+    color: $secondaryColor;
   }
   .f-red {
-    color: $thirdColor
+    color: $thirdColor;
   }
 
   .btn-small {
@@ -197,6 +225,251 @@
     margin: 5px auto;
   }
 
+  .fs-2 {
+    font-size: 1.5em;
+  }
   .fs-1 {
     font-size: 1.3em;
   }
+  .fs-0 {
+    font-size: 1em;
+  }
+
+  .fw {
+    font-weight: 900;
+  }
+
+  .f-upper {
+    text-transform: uppercase;
+  }
+
+  .navbar {
+    @include flexbox;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 10px;
+    @include responsive(Wide) {
+      background-color: white;
+      width: 60%;
+      margin: 50px auto auto;
+      height: 15%;
+      min-height: 100px;
+    }
+  }
+
+  .nav-item {
+    @include flexbox();
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    a {
+      text-align: center;
+      text-decoration: none;
+    }
+    span {
+      @include responsive(Wide) {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+      }
+      display: none;
+    }
+    @include responsive(Wide) {
+      position: relative;
+      &::after { 
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        background-color: $secondaryColor;
+        width: 0%;
+        height: 2px;
+        transition: width ease .7s;
+      }
+      &:hover::after {
+        width: 100%;
+        transition: width ease .7s;
+      }
+    }
+  }
+
+  .breakline-lg {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    width: 90%;
+    @include responsive(Wide) {
+      display: none;
+    }
+  }
+
+  .breakline-med {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    width: 70%;
+    margin: 0;
+    @include responsive(Wide) {
+      display: none;
+    }
+  }
+
+  main {
+    @include flexbox();
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+.footer-info {
+  width: 100%;
+  background-color: $backgroundColor;
+  text-transform: uppercase;
+  font-weight: 800;
+  @include flexbox();
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  .items-footer {
+    @include flexbox();
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+}
+
+.box-items {
+  @include flexbox();
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
+  @include responsive(Wide) {
+    flex-direction: row;
+    margin-bottom: 100px;
+  }
+}
+
+.item-display {
+  @include flexbox();
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  @include responsive(Wide) {
+    background-color: white;
+    width: 200px;
+    height: 250px;
+    box-shadow: rgba(0, 0, 0, 0.16) 7px 8px 4px 0px;
+    gap: 20px;
+    .svg {
+      order: 1;
+      overflow: hidden;
+      border-radius: 50%;
+      background-color: rgba(128, 128, 128, 0.20);
+      padding: 20px;
+    }
+    .cat-title {
+      order: 2
+    }
+    .nb {
+      order: 3;
+    }
+  }
+}
+
+.form-admin {
+  @include flexbox();
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  > * {
+    box-shadow: rgba(0, 0, 0, 0.16) 7px 8px 4px 0px;
+  }
+  @include responsive(Wide) {
+    margin-bottom: 100px;
+  }
+}
+
+///////// Reset style from notifications bundle \\\\\\\\\\\\\
+
+.fl-main-container .fl-container .fl-progress-bar {
+  display : flex;
+  height : .55em;
+  margin-left : -1px
+}
+
+.fl-main-container .fl-container.fl-success .fl-progress-bar {
+  background-color : #12e068 !important;
+  height: .50em !important;
+}
+.fl-main-container .fl-container.fl-success .fl-icon {
+  background-color : $primaryColor !important;
+}
+.fl-main-container .fl-container.fl-success .fl-progress-bar .fl-progress {
+  background-color : $primaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-success {
+  border-left : .8em solid $primaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-success.fl-rtl {
+  border-right : .8em solid $primaryColor !important;
+}
+  .fl-main-container .fl-container.fl-flasher.fl-success:not(.fl-rtl) {
+  border-left : .8em solid $primaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-success .fl-title {
+  color : $primaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher {
+  color : $backgroundColor !important;
+}
+
+.fl-main-container .fl-container.fl-info .fl-progress-bar {
+  background-color : #fcbe54 !important;
+  height: .50em !important;
+}
+.fl-main-container .fl-container.fl-info .fl-icon {
+  background-color : $secondaryColor !important;
+}
+.fl-main-container .fl-container.fl-info .fl-progress-bar .fl-progress {
+  background-color : $secondaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-success {
+  border-left : .8em solid $secondaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-info.fl-rtl {
+  border-right : .8em solid $secondaryColor !important;
+}
+  .fl-main-container .fl-container.fl-flasher.fl-info:not(.fl-rtl) {
+  border-left : .8em solid $secondaryColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-info .fl-title {
+  color : $secondaryColor !important;
+}
+
+.fl-main-container .fl-container.fl-error .fl-progress-bar {
+  background-color : #f04949 !important;
+  height: .50em !important;
+}
+.fl-main-container .fl-container.fl-error .fl-icon {
+  background-color : $thirdColor !important;
+}
+.fl-main-container .fl-container.fl-error .fl-progress-bar .fl-progress {
+  background-color : $thirdColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-success {
+  border-left : .8em solid $thirdColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-error.fl-rtl {
+  border-right : .8em solid $thirdColor !important;
+}
+  .fl-main-container .fl-container.fl-flasher.fl-error:not(.fl-rtl) {
+  border-left : .8em solid $thirdColor !important;
+}
+.fl-main-container .fl-container.fl-flasher.fl-error .fl-title {
+  color : $thirdColor !important;
+}
+
+
+
+///////// Reset finished \\\\\\\\\\\\\

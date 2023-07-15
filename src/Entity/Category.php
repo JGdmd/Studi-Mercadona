@@ -28,8 +28,7 @@ class Category
 
     public function setLabel(string $label): static
     {
-        $this->label = $label;
-
+        $this->label = strtolower($label);
         return $this;
     }
 }

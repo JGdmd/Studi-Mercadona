@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ asset('style/style.css')}}" rel="stylesheet" />
+    <link href="{{ asset('style/notifications.css')}}" rel="stylesheet" />
     <title>Mercadona - {{title }}</title>
+    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login')%}
+    <style>
+    body {
+        overflow: hidden;
+    }
+    </style>
+    {% endif %}
 </head>
-    <header class="header-logo"><a href="{{ path('landingPage' )}}"/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
 <body>
+    <header class="header-logo"><a href="{{ path('landingPage' )}}"/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
+    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login')%}
+        <div class="background-landing"></div>
+    {% endif %}
