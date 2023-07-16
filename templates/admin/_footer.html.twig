@@ -17,3 +17,7 @@
         <span class="f-green"> {{app.user.userIdentifier}} connecté </span>
     </div>
 </footer>
+{% set route = app.request.attributes.get('_route') %}
+{% if route == 'addProduct' %}
+<script src="{{ asset('js/imageEmbbed.js') }}"></script>
+{% endif %}

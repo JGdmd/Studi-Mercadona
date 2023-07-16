@@ -1,12 +1,21 @@
 <?php
 
 
-namespace App;
+namespace App\Services;
 use App\Entity\Seller;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class Functions {
     
+    public function __construct(
+        private string $targetDirectory,
+        private SluggerInterface $slugger,
+    ) {
+    }
+
     static function getRandomBytes($nbBytes = 32)
     {
         $bytes = openssl_random_pseudo_bytes($nbBytes, $strong);
@@ -37,5 +46,11 @@ class Functions {
         }
         return $password;
     }
+
+    static function codeValidation(string $code)
+    {
+        
+    }
+
 }
 

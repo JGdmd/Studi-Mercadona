@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SellerRepository::class)]
 #[UniqueEntity(fields: ['code'], message: 'Ce code est déjà utilisé.')]
@@ -17,7 +18,16 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 13, unique: true)]
+    #[Assert\Length(
+        exactly: 13,
+        exactMessage: 'Le code employé est de 13 caractères'
+    )]
+    #[Assert\Regex(
+        pattern: '/^MER-[0-9]{5}-[0-9]{3}$/',
+        match: true,
+        message: 'Ce code n\'est pas un code employé',
+    )]
     private ?string $code = null;
 
     #[ORM\Column]
@@ -30,6 +40,13 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Adresse email trop longue'
+    )]
+    #[Assert\Email(
+        message: 'Le mail {{ value }} n\'est pas une adresse valide.',
+    )]
     private ?string $email = null;
 
     public function getId(): ?int

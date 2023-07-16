@@ -7,8 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[UniqueEntity(fields: ['label'], message: 'Ce produit existe déjà')]
 class Product
 {
     #[ORM\Id]
@@ -16,21 +19,30 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 55)]
+    #[ORM\Column(length: 55, unique: true)]
+    #[Assert\Length(
+        max: 55,
+        maxMessage: 'Le label ne peut être que de 55 caractères maximum',
+    )]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'La description produit ne peut être que de 255 caractères maximum',
+    )]
     private ?string $description = null;
-
+    
     #[ORM\Column]
     private ?float $price = null;
-
+    
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+    
+    #[ORM\Column(length: 255)]
+    private ?string $image = null;
 
-    #[ORM\Column(type: Types::BLOB)]
-    private $image = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -149,5 +161,10 @@ class Product
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->label;
     }
 }

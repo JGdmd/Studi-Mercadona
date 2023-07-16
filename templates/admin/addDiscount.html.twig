@@ -1,0 +1,14 @@
+{% extends 'admin/_dashboard.html.twig' %}
+{% block context %}
+   <h1 class="f-upper fw fs-2">Appliquer une promotion</h1>
+    {{ form_start(discountForm, { 'attr' : {'class' : 'form-admin' }}) }}
+        {{ form_widget(discountForm.product, { 'attr' : {'class' : 'input select', 'placeholder' : 'Produit promotionné'}}) }}
+        {{ form_widget(discountForm.discount, { 'attr' : {'class' : 'input', 'placeholder' : '% Remise', 'min': 0, 'step' : 0.5}, 'html5': true}) }}
+        {{ form_widget(discountForm.begins, { 'attr' : {'class' : 'input', 'placeholder' : 'Date de début de promotion' }}) }}
+        {{ form_widget(discountForm.ends, { 'attr' : {'class' : 'input', 'placeholder' : 'Date de fin de promotion' }}) }}
+        {{ form_widget(discountForm.submit, { 'attr' : {'class' : 'btn bg-green' }} )}}
+    {{ form_end(discountForm) }}
+    <img id="output"/>
+{% endblock %}
+
+

@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[UniqueEntity(fields: ['label'], message: 'Cette catégorie existe déjà.')]
 class Category
 {
     #[ORM\Id]
@@ -13,7 +16,11 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 55)]
+    #[ORM\Column(length: 55, unique: true)]
+    #[Assert\Length(
+        max: 50,
+        maxMessage: 'Le label ne peut être que de 55 caractères maximum',
+    )]
     private ?string $label = null;
 
     public function getId(): ?int
@@ -30,5 +37,10 @@ class Category
     {
         $this->label = strtolower($label);
         return $this;
+    }
+    
+    public function __toString()
+    {
+        return $this->label;
     }
 }

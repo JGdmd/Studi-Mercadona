@@ -190,6 +190,17 @@ body {
   color: black;
 }
 
+.select {
+  height: -moz-fit-content;
+  height: fit-content;
+  width: 75%;
+}
+
+input[type=file] {
+  background-color: white;
+  height: 15px;
+}
+
 .input:focus {
   outline: none;
   border: #FFA100 solid 2px;
@@ -365,10 +376,6 @@ main {
   }
   .item-display .svg {
     order: 1;
-    overflow: hidden;
-    border-radius: 50%;
-    background-color: rgba(128, 128, 128, 0.2);
-    padding: 20px;
   }
   .item-display .cat-title {
     order: 2;
@@ -376,6 +383,13 @@ main {
   .item-display .nb {
     order: 3;
   }
+}
+
+.svg {
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: rgba(128, 128, 128, 0.2);
+  padding: 15px;
 }
 
 .form-admin {
@@ -391,6 +405,87 @@ main {
   .form-admin {
     margin-bottom: 100px;
   }
+}
+
+#output {
+  width: 90%;
+  height: auto;
+  max-height: 300px;
+  margin: 20px 0;
+  box-shadow: rgba(0, 0, 0, 0.16) 7px 8px 4px 0px;
+}
+@media (min-width: 768px) {
+  #output {
+    position: absolute;
+    right: 15%;
+    top: 40%;
+    width: 400px;
+  }
+}
+
+.list {
+  list-style-type: decimal;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.list li {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 5px auto;
+}
+
+.modal-window {
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.45);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+}
+.modal-window > div {
+  text-align: center;
+  width: 75%;
+  max-height: 300px;
+  overflow-y: scroll;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2em;
+  background: white;
+}
+@media (min-width: 768px) {
+  .modal-window > div {
+    width: 400px;
+  }
+}
+
+#modal {
+  visibility: hidden;
+}
+
+#modal:target {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-close {
+  position: sticky;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row-reverse;
+}
+.modal-close img {
+  width: 20px;
+}
+.modal-close:hover {
+  color: black;
 }
 
 .fl-main-container .fl-container .fl-progress-bar {
