@@ -55,10 +55,24 @@ class ProductType extends AbstractType
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'required' => true,
+                'placeholder' => 'Sélectionnez une catégorie',
+                'choice_attr' => function($choice, $key, $value) {
+                    if (null === $choice) {
+                        return ['disabled' => 'disabled'];
+                    }
+                    return [];
+                },
             ])
             ->add('unit', EntityType::class, [
                 'class' => Unit::class,
+                'placeholder' => 'Sélectionnez une unité',
                 'required' => true,
+                'choice_attr' => function($choice, $key, $value) {
+                    if (null === $choice) {
+                        return ['disabled' => 'disabled'];
+                    }
+                    return [];
+                },
             ])
             ->add('submit', SubmitType::class, [
                 'label' => $options['save_button_label']])

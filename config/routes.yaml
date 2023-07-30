@@ -3,3 +3,6 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+get_product:
+    path: '/get-product/{id}'
+    controller: App\Controller\AdminController::getProduct

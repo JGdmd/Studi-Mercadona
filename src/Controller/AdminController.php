@@ -11,6 +11,9 @@ use App\Form\DiscountType;
 use App\Form\ProductType;
 use App\Form\SellerType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
+use App\Repository\PromotionRepository;
+use App\Repository\SellerRepository;
 use App\Services\Functions;
 use App\Services\FileUploader;
 use Doctrine\DBAL\Exception\DriverException;
@@ -20,8 +23,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AdminController extends AbstractController {
@@ -34,10 +39,17 @@ class AdminController extends AbstractController {
     }
 
     #[Route('/admin', name:'adminDashboard')]
-    public function dashboardDisplay()
+    public function dashboardDisplay(ProductRepository $productRepository, PromotionRepository $discountRepository, CategoryRepository $categoryRepository)
     {
+        $today = Date('Y-m-d');
+        $categories = $categoryRepository->findAll();
+        $products = $productRepository->findAll();
+        $discounts = $discountRepository->findDiscountAvailable($today);
         return $this->render('admin/admin.html.twig', [
-            'title' => 'Dashboard'
+            'title' => 'Dashboard',
+            'categories' => count($categories),
+            'products' => count($products),
+            'discounts' => count($discounts),
         ]);
     }
 
@@ -126,7 +138,7 @@ class AdminController extends AbstractController {
     }
 
     #[Route('/admin/add-discount', name:'addDiscount')]
-    public function addDiscountDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, CategoryRepository $categoryRepo, ValidatorInterface $validator)
+    public function addDiscountDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, ValidatorInterface $validator, PromotionRepository $promotionRepository, ProductRepository $productRepository)
     {
         $discount = new Promotion();
 
@@ -137,11 +149,17 @@ class AdminController extends AbstractController {
         $errors = $validator->validate($discount);
 
         if($discountForm->isSubmitted() && $discountForm->isValid()) {
-
-            $entityManager->persist($discount);
-            $entityManager->flush();
-            $flasher->addSuccess('La promotion a bien été ajoutée');
-
+            $isExist = $promotionRepository->validateDates($discount->getProduct()->getId(),$discount->getBegins(), $discount->getEnds());
+            // On vérifie que la période de promotion n'est pas déjà existante.
+            if(empty($isExist)) {
+                $entityManager->persist($discount);
+                $entityManager->flush();
+                $flasher->addSuccess('La promotion a bien été ajoutée');
+            } else {
+                $existingBegins = $isExist[0]->getBegins();
+                $existingEnds = end($isExist)->getEnds();
+                $flasher->addError('Une promotion ou plusieurs sont programées : ' . date_format($existingBegins, 'd/m/Y') . ' => ' . date_format($existingEnds, 'd/m/Y'));
+            }
         } elseif ($discountForm->isSubmitted() && $discountForm->isValid() == false) {
             if(count($errors) > 0) {
                 $errorMessage = $errors->get(0)->getMessage();
@@ -158,10 +176,15 @@ class AdminController extends AbstractController {
     }
 
     #[Route('/admin/new-admin', name:'newAdmin')]
-    public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator)
+    public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo)
     {
-        $seller = new Seller();
+        $users = $sellerRepo->findAll();
+        $usersExists = [];
+        foreach($users as $user) {
+            $usersExists[] = $user->getCode();
+        }
 
+        $seller = new Seller();
         $sellerForm = $this->createForm(SellerType::class, $seller);
 
         $sellerForm->handleRequest($request);
@@ -188,7 +211,8 @@ class AdminController extends AbstractController {
 
         return $this->render('admin/addAdmin.html.twig', [
             'sellerForm' => $sellerForm->createView(),
-            'title' => 'Nouvel Admin'
+            'title' => 'Nouvel Admin',
+            'users' => $usersExists
         ]);
     }
 
@@ -207,4 +231,24 @@ class AdminController extends AbstractController {
         $this->mailer->send($email);
     }
 
+    #[Route('/admin/get-product/{id}', name:'getProduct')]
+    public function getProduct($id, ProductRepository $productRepository):JsonResponse {
+        $product = $productRepository->find($id);
+        if(!$product) { return $this->json(['succes' => false]); }
+        $discounts = [];
+        foreach ($product->getPromotions() as $discount) {
+            $date = Date('Y-m-d');
+            if(date_format($discount->getEnds(), 'Y-m-d') >= $date) {
+                $discounts[] = [
+                    'begins' => $discount->getBegins(),
+                    'ends' => $discount->getEnds(),
+                ];
+            }
+        }
+        return $this->json([
+             'name' => $product->getLabel(),
+             'price' => $product->getPrice(),
+             'discounts' => $discounts
+        ]);
+    }
 }

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+<h1>Le goût des promos !</h1>
+<div class="catalog">
+    {% for product in products %}
+    <div class="product">
+        <img src="{{ asset(product.image) }}" />
+        <span class="product-label">{{ product.label }}</span>
+        <span class="product-description">{{ product.description }}</span>
+        <div>
+        {% if (product.discount is same as (null)) %}
+        <span class="product-price f-green">{{ product.price }}</span>
+        {% else %}
+            <span class="product-price f-green old-price">{{ product.price }}</span>
+            <span class="product-price f-red">{{ product.discount }}</span>
+        {% endif %}
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

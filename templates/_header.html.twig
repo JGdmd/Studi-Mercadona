@@ -15,7 +15,10 @@
     {% endif %}
 </head>
 <body>
-    <header class="header-logo"><a href="{{ path('landingPage' )}}"/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
+    
     {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login')%}
         <div class="background-landing"></div>
+    <header class="header-logo no-visible-desktop"><a href="{{ path('landingPage' )}}"/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
+    {% else %}
+    <header class="header-logo"><a href={% if (app.request.attributes.get('_route') is same as('catalog')) %}"{{ path('landingPage' )}}"{% else %} "{{ path('adminDashboard' )}}" {% endif %}/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
     {% endif %}

@@ -39,6 +39,47 @@ class PromotionRepository extends ServiceEntityRepository
         }
     }
 
+    public function findDiscountAvailable(string $date)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->where('p.begins <= :date')
+            // orWhere permettra d'obtenir l'ensemble des promotions (même celle à venir)
+            ->andWhere('p.ends >= :date')
+            ->setParameter('date', $date);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function validateDates($id, $dateBegins, $dateEnds)
+    {
+        // Logique de validation des dates ici
+        // On vérifie que la date n'est pas une autre période de promotions
+        $existingPromotions = $this->createQueryBuilder('p')
+            ->andWhere('p.product = :productId')
+            ->andWhere(':begins BETWEEN p.begins AND p.ends OR :ends BETWEEN p.begins AND p.ends OR p.begins BETWEEN :begins AND :ends')
+            ->setParameter('productId', $id)
+            ->setParameter('begins', $dateBegins)
+            ->setParameter('ends', $dateEnds)
+            ->getQuery()
+            ->getResult();
+
+        return $existingPromotions;
+    }
+
+    public function discountAvailable($id)
+    {
+        // On cherche la promotion actuelle
+        $availableDiscount = $this->createQueryBuilder('p')
+            ->andWhere('p.product = :productId')
+            ->andWhere(':date BETWEEN p.begins AND p.ends')
+            ->setParameter('productId', $id)
+            ->setParameter('date', Date('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+
+        return $availableDiscount;
+    }
+
 //    /**
 //     * @return Promotion[] Returns an array of Promotion objects
 //     */

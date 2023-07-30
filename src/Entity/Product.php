@@ -111,7 +111,7 @@ class Product
 
     public function getImage()
     {
-        return $this->image;
+        return 'products/' . $this->image;
     }
 
     public function setImage($image): static

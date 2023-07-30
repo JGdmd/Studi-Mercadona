@@ -19,13 +19,17 @@ class Promotion
     #[Assert\Positive]
     private ?float $discount = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\DateTime]
-    private ?\DateTimeInterface $begins = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    /**
+     * @var string A "Y-m-d" formatted value
+     * */
+    private $begins = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\DateTime]
-    private ?\DateTimeInterface $ends = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    /**
+     * @var string A "Y-m-d" formatted value
+     */
+    private $ends = null;
 
     #[ORM\ManyToOne(inversedBy: 'promotions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -50,6 +54,7 @@ class Promotion
 
     public function getBegins(): ?\DateTimeInterface
     {
+        
         return $this->begins;
     }
 
