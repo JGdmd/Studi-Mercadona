@@ -1,2 +1,5 @@
+{% if app.request.attributes.get('_route') == 'catalog' %}
+<script src="{{ asset('js/filter.js') }}"></script>
+{% endif %}
 </body>
 </html>

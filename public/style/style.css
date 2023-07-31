@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,800;0,900;1,400&display=swap");
 html, body {
   height: 100%;
@@ -19,6 +18,7 @@ body {
     background-image: url('data:image/svg+xml,<svg id="wave" style="transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 490" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(0, 171, 97, 1)" offset="0%"></stop><stop stop-color="rgba(0, 171, 97, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(%23sw-gradient-0)" d="M0,343L60,326.7C120,310,240,278,360,277.7C480,278,600,310,720,343C840,376,960,408,1080,383.8C1200,359,1320,278,1440,220.5C1560,163,1680,131,1800,171.5C1920,212,2040,327,2160,318.5C2280,310,2400,180,2520,122.5C2640,65,2760,82,2880,138.8C3000,196,3120,294,3240,310.3C3360,327,3480,261,3600,245C3720,229,3840,261,3960,285.8C4080,310,4200,327,4320,285.8C4440,245,4560,147,4680,89.8C4800,33,4920,16,5040,65.3C5160,114,5280,229,5400,228.7C5520,229,5640,114,5760,122.5C5880,131,6000,261,6120,285.8C6240,310,6360,229,6480,163.3C6600,98,6720,49,6840,40.8C6960,33,7080,65,7200,130.7C7320,196,7440,294,7560,277.7C7680,261,7800,131,7920,73.5C8040,16,8160,33,8280,81.7C8400,131,8520,212,8580,253.2L8640,294L8640,490L8580,490C8520,490,8400,490,8280,490C8160,490,8040,490,7920,490C7800,490,7680,490,7560,490C7440,490,7320,490,7200,490C7080,490,6960,490,6840,490C6720,490,6600,490,6480,490C6360,490,6240,490,6120,490C6000,490,5880,490,5760,490C5640,490,5520,490,5400,490C5280,490,5160,490,5040,490C4920,490,4800,490,4680,490C4560,490,4440,490,4320,490C4200,490,4080,490,3960,490C3840,490,3720,490,3600,490C3480,490,3360,490,3240,490C3120,490,3000,490,2880,490C2760,490,2640,490,2520,490C2400,490,2280,490,2160,490C2040,490,1920,490,1800,490C1680,490,1560,490,1440,490C1320,490,1200,490,1080,490C960,490,840,490,720,490C600,490,480,490,360,490C240,490,120,490,60,490L0,490Z"></path></svg>');
     background-position: bottom;
     background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
 
@@ -187,6 +187,10 @@ body {
 
 .f-red {
   color: #ff2323;
+}
+
+.center {
+  text-align: center;
 }
 
 .btn-small {
@@ -633,12 +637,31 @@ main {
   font-size: 1.3rem;
   margin: 0 10px;
 }
-.product-price::after {
-  content: " €";
-}
 
 .old-price {
   text-decoration: line-through;
+}
+
+#filter {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 10px auto;
+}
+@media (min-width: 768px) {
+  #filter {
+    max-width: 200px;
+  }
+}
+
+#notFound {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .fl-main-container .fl-container .fl-progress-bar {

@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 {% block content %}
-<h1>Le goût des promos !</h1>
+<h1 class="center f-orange">Le goût des promos !</h1>
+<select class="center" name="filter" id="filter">
+<option disabled selected>Filtrer les produits</option>
+ {% for category in categories %}
+    <option value="{{ category.id }}">{{ category.label | capitalize }}</option>
+ {% endfor %}
+</select>
 <div class="catalog">
     {% for product in products %}
     <div class="product">
@@ -9,10 +15,10 @@
         <span class="product-description">{{ product.description }}</span>
         <div>
         {% if (product.discount is same as (null)) %}
-        <span class="product-price f-green">{{ product.price }}</span>
+        <span class="product-price f-green">{{ product.price }} € / {{ product.unit }} </span>
         {% else %}
-            <span class="product-price f-green old-price">{{ product.price }}</span>
-            <span class="product-price f-red">{{ product.discount }}</span>
+            <span class="product-price f-green old-price">{{ product.price }} €</span>
+            <span class="product-price f-red">{{ product.discount }} € / {{ product.unit }} </span>
         {% endif %}
         </div>
     </div>

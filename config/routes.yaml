@@ -6,3 +6,6 @@ controllers:
 get_product:
     path: '/get-product/{id}'
     controller: App\Controller\AdminController::getProduct
+get_product_by_category:
+    path: '/get-product-by-category/{id}'
+    controller: App\Controller\FrontPagesController::getProductByCategory
