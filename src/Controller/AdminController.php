@@ -38,9 +38,12 @@ class AdminController extends AbstractController {
         $this->mailer = $mailer;
     }
 
+    // Page du dashboard Admin
+
     #[Route('/admin', name:'adminDashboard')]
     public function dashboardDisplay(ProductRepository $productRepository, PromotionRepository $discountRepository, CategoryRepository $categoryRepository)
     {
+        // On récupère la date du jour et on affiche un compteur avec les informations pertinentes du catalogue
         $today = Date('Y-m-d');
         $categories = $categoryRepository->findAll();
         $products = $productRepository->findAll();
@@ -52,6 +55,9 @@ class AdminController extends AbstractController {
             'discounts' => count($discounts),
         ]);
     }
+
+
+    // Page d'ajout de catégorie
 
     #[Route('/admin/add-category', name:'addCategory')]
     public function addCategoryDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, CategoryRepository $categoryRepo, ValidatorInterface $validator)
@@ -65,13 +71,18 @@ class AdminController extends AbstractController {
 
         $errors = $validator->validate($category);
 
+        // Validation du formulaire
+
         try {
             if($categoryForm->isSubmitted() && $categoryForm->isValid()) {
     
                 $entityManager->persist($category);
                 $entityManager->flush();
                 $flasher->addSuccess('La catégorie a bien été ajoutée');
-    
+                
+                /* Si le formulaire n'a pas respecté les contraintes imposés par l'entity, 
+                 on regarde pourquoi et on affiche un message en conséquence */
+
             } elseif ($categoryForm->isSubmitted() && $categoryForm->isValid() == false) {
                 if(count($errors) > 0) {
                     $errorMessage = $errors->get(0)->getMessage();
@@ -104,32 +115,47 @@ class AdminController extends AbstractController {
 
         $errors = $validator->validate($product);
 
-        if($productForm->isSubmitted() && $productForm->isValid()) {
-            $image = $productForm->get('imageFile')->getData();
-            $imageName = $fileUploader->upload($image, $product->getCategory());
-            if($imageName !== null) {
-                $product->setImage($imageName);
-                $entityManager->persist($product);
-                $entityManager->flush();
-                $flasher->addSuccess('Le produit a bien été ajouté');
-            } else {
-                $flasher->addError('Une erreur est survenue avec le fichier. Réessayez.');
-            }
-        } elseif ($productForm->isSubmitted() && $productForm->isValid() == false) {
-            if(count($errors) > 0) {
-                $errorMessage = $errors->get(0)->getMessage();
-                    $flasher->addError($errorMessage);
-            } else {
-                $errors = $productForm->getErrors(true);
-                if(count($errors) > 0) {
-                    foreach($errors as $error) {
-                    $flasher->addError($error->getMessage());
-                    }
+        // Validation du formulaire
+
+        try {
+            if($productForm->isSubmitted() && $productForm->isValid()) {
+
+                // Si le formulaire est valide, on vient faire la validation de l'image
+
+                $image = $productForm->get('imageFile')->getData();
+                $imageName = $fileUploader->upload($image, $product->getCategory());
+
+                if($imageName !== null) {
+                    $product->setImage($imageName);
+                    $entityManager->persist($product);
+                    $entityManager->flush();
+                    $flasher->addSuccess('Le produit a bien été ajouté');
                 } else {
-                    $flasher->addError('Produit non enregistré, une erreur s\'est produite.');
+                    $flasher->addError('Une erreur est survenue avec le fichier. Réessayez.');
+                }
+            } elseif ($productForm->isSubmitted() && $productForm->isValid() == false) {
+
+                /* Si le formulaire n'a pas respecté les contraintes imposés par l'entity, 
+                 on regarde pourquoi et on affiche un message en conséquence */
+
+                if(count($errors) > 0) {
+                    $errorMessage = $errors->get(0)->getMessage();
+                        $flasher->addError($errorMessage);
+                } else {
+                    $errors = $productForm->getErrors(true);
+                    if(count($errors) > 0) {
+                        foreach($errors as $error) {
+                        $flasher->addError($error->getMessage());
+                        }
+                    } else {
+                        $flasher->addError('Produit non enregistré, une erreur s\'est produite.');
+                    }
                 }
             }
+        } catch(DriverException $e) {
+            $flasher->addError('Une erreur s\'est produite. Produit non enregistrée.');
         }
+
 
         return $this->render('admin/addProduct.html.twig', [
             'productForm' => $productForm->createView(),
@@ -138,7 +164,7 @@ class AdminController extends AbstractController {
     }
 
     #[Route('/admin/add-discount', name:'addDiscount')]
-    public function addDiscountDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, ValidatorInterface $validator, PromotionRepository $promotionRepository, ProductRepository $productRepository)
+    public function addDiscountDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, ValidatorInterface $validator, PromotionRepository $promotionRepository)
     {
         $discount = new Promotion();
 
@@ -148,32 +174,42 @@ class AdminController extends AbstractController {
 
         $errors = $validator->validate($discount);
 
-        if($discountForm->isSubmitted() && $discountForm->isValid()) {
-            $isExist = $promotionRepository->validateDates($discount->getProduct()->getId(),$discount->getBegins(), $discount->getEnds());
-            // On vérifie que la période de promotion n'est pas déjà existante.
-            if(empty($isExist)) {
-                $entityManager->persist($discount);
-                $entityManager->flush();
-                $flasher->addSuccess('La promotion a bien été ajoutée');
-            } else {
-                $existingBegins = $isExist[0]->getBegins();
-                $existingEnds = end($isExist)->getEnds();
-                $flasher->addError('Une promotion ou plusieurs sont programées : ' . date_format($existingBegins, 'd/m/Y') . ' => ' . date_format($existingEnds, 'd/m/Y'));
+        // Validation du formulaire
+
+        try {
+
+            if($discountForm->isSubmitted() && $discountForm->isValid()) {
+                $isExist = $promotionRepository->validateDates($discount->getProduct()->getId(),$discount->getBegins(), $discount->getEnds());
+
+                // On vérifie que la période de promotion n'est pas déjà existante.
+                if(empty($isExist)) {
+                    $entityManager->persist($discount);
+                    $entityManager->flush();
+                    $flasher->addSuccess('La promotion a bien été ajoutée');
+                } else {
+                    $existingBegins = $isExist[0]->getBegins();
+                    $existingEnds = end($isExist)->getEnds();
+                    $flasher->addError('Une promotion ou plusieurs sont programées : ' . date_format($existingBegins, 'd/m/Y') . ' => ' . date_format($existingEnds, 'd/m/Y'));
+                }
+            } elseif ($discountForm->isSubmitted() && $discountForm->isValid() == false) {
+                if(count($errors) > 0) {
+                    $errorMessage = $errors->get(0)->getMessage();
+                        $flasher->addError($errorMessage);
+                } else {
+                    $flasher->addError('Promotion non enregistrée.');
+                }
             }
-        } elseif ($discountForm->isSubmitted() && $discountForm->isValid() == false) {
-            if(count($errors) > 0) {
-                $errorMessage = $errors->get(0)->getMessage();
-                    $flasher->addError($errorMessage);
-            } else {
-                $flasher->addError('Promotion non enregistrée.');
-            }
-    }
+        } catch(DriverException $e) {
+            $flasher->addError('Une erreur s\'est produite. Promotion non enregistrée.');
+        }
 
         return $this->render('admin/addDiscount.html.twig', [
             'discountForm' => $discountForm->createView(),
             'title' => 'Ajout Promotion',
         ]);
     }
+
+    // Ajout d'un nouvel admin
 
     #[Route('/admin/new-admin', name:'newAdmin')]
     public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo)
@@ -191,23 +227,28 @@ class AdminController extends AbstractController {
 
         $errors = $validator->validate($seller);
 
-        if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
-            $plainPassword = Functions::generatePassword($seller);
-            $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
-            $seller->setPassword($hashpassword);
-            $entityManager->persist($seller);
-            $entityManager->flush();
-            $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
-            $flasher->addSuccess('Administrateur enregistré. Mot de passe envoyé par mail.');
-
-        } elseif ($sellerForm->isSubmitted() && $sellerForm->isValid() == false) {
-            if(count($errors) > 0) {
-                $errorMessage = $errors->get(0)->getMessage();
-                    $flasher->addError($errorMessage);
-            } else {
-                $flasher->addError('Administrateur non enregistré.');
+        try {
+            if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
+                $plainPassword = Functions::generatePassword($seller);
+                $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
+                $seller->setPassword($hashpassword);
+                $entityManager->persist($seller);
+                $entityManager->flush();
+                $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
+                $flasher->addSuccess('Administrateur enregistré. Mot de passe envoyé par mail.');
+    
+            } elseif ($sellerForm->isSubmitted() && $sellerForm->isValid() == false) {
+                if(count($errors) > 0) {
+                    $errorMessage = $errors->get(0)->getMessage();
+                        $flasher->addError($errorMessage);
+                } else {
+                    $flasher->addError('Administrateur non enregistré.');
+                }
             }
+        } catch(DriverException $e) {
+            $flasher->addError('Une erreur s\'est produite. Administrateur non enregistré.');
         }
+
 
         return $this->render('admin/addAdmin.html.twig', [
             'sellerForm' => $sellerForm->createView(),
@@ -215,6 +256,8 @@ class AdminController extends AbstractController {
             'users' => $usersExists
         ]);
     }
+
+    // Fonction d'envoi de mail pour mot de passe
 
     private function sendMail(string $mail, Seller $seller, string $password)
     {

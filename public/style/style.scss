@@ -621,10 +621,23 @@
 
 #filter {
   width: fit-content;
-  margin: 10px auto;
+  margin: auto;
   @include responsive(Wide) {
     max-width: 200px;
   }
+}
+
+.filter-group {
+  @include flexbox;
+  flex-direction: column-reverse;
+  margin: 10px auto;
+}
+
+.nav-page {
+  margin: auto;
+  @include flexbox();
+  justify-content: center;
+  gap: 20px;
 }
 
 #notFound {

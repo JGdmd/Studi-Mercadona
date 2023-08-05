@@ -154,7 +154,7 @@ class Product
     public function removePromotion(Promotion $promotion): static
     {
         if ($this->promotions->removeElement($promotion)) {
-            // set the owning side to null (unless already changed)
+
             if ($promotion->getProduct() === $this) {
                 $promotion->setProduct(null);
             }

@@ -52,8 +52,8 @@ class PromotionRepository extends ServiceEntityRepository
 
     public function validateDates($id, $dateBegins, $dateEnds)
     {
-        // Logique de validation des dates ici
-        // On vérifie que la date n'est pas une autre période de promotions
+        // Validation des dates
+        // On vérifie que la date n'est pas dans une autre période de promotions
         $existingPromotions = $this->createQueryBuilder('p')
             ->andWhere('p.product = :productId')
             ->andWhere(':begins BETWEEN p.begins AND p.ends OR :ends BETWEEN p.begins AND p.ends OR p.begins BETWEEN :begins AND :ends')

@@ -645,12 +645,25 @@ main {
 #filter {
   width: -moz-fit-content;
   width: fit-content;
-  margin: 10px auto;
+  margin: auto;
 }
 @media (min-width: 768px) {
   #filter {
     max-width: 200px;
   }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 10px auto;
+}
+
+.nav-page {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 
 #notFound {

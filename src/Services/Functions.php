@@ -39,17 +39,17 @@ class Functions {
     }
     
     static function generatePassword(Seller $seller) {
+        // On génére automatiquement le mot de passe
+        // Etape 1 : On obtient un string aléatoire à l'aide d'une chaine de 32 bytes.
         $password = Functions::generateRandomString(12);
+        // Etape 2 : On remplace aléatoirement 3 caractères par des caractères spéciaux.
         for($i = 0; $i <= 3; $i++) {
             $randNumber = rand(1,14);
             $password = substr_replace($password, Functions::generateSpecialCharacter(), $randNumber, 0);
         }
-        return $password;
-    }
 
-    static function codeValidation(string $code)
-    {
-        
+        // On retourne le mot de passe pour l'insérer dans le mail.
+        return $password;
     }
 
 }

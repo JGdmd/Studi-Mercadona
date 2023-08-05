@@ -3,12 +3,6 @@
 <h1 class="center f-orange">Le goût des promos !</h1>
 <div class="filter-group">
     <a class="btn bg-green" href="{{ path('catalog', {page: 1}) }}">Tous les produits</a>
-    <select class="center" name="filter" id="filter">
-    <option disabled selected>Filtrer les produits</option>
-    {% for category in categories %}
-        <option value="{{ category.id }}">{{ category.label | capitalize }}</option>
-    {% endfor %}
-    </select>
 </div>
 <div class="catalog">
     {% for product in products %}
@@ -29,10 +23,10 @@
 </div>
 <div class="nav-page">
     {% if previous is not null %}
-    <a id="previous" class="btn bg-orange" href="{{ path('catalog', {page: previous}) }}">Précédent</a>
+    <a id="previous" class="btn bg-orange" href="{{ path('getProductsByCategory', {id: category, page: previous}) }}">Précédent</a>
     {% endif %}
     {% if next is not null %}
-    <a id="next" class="btn bg-orange" href="{{ path('catalog', {page : next}) }}">Suivant</a>
+    <a id="next" class="btn bg-orange" href="{{ path('getProductsByCategory', {id: category, page : next}) }}">Suivant</a>
     {% endif %}
 </div>
 <br />

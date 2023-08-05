@@ -1,12 +1,23 @@
 let select = document.getElementById('filter');
 let catalog = document.querySelector('.catalog');
+let navigationPage = document.querySelector('.nav-page');
+let next = document.getElementById('next');
+let previous = document.getElementById('previous');
+
 select.addEventListener('change', async () => {
     let categoryId = select.value;
-    let path = '/get-product-by-category/' + categoryId;
+    let path = '/get-products-by-category-ajax/' + categoryId;
     const response = await fetch(path);
 
+    if(next) {
+        next.remove();
+    }
+    if(previous) {
+        previous.remove();
+    }
+
     if (!response.ok) {
-        // Gérer les cas d'erreur si nécessaire
+        console.log('Une erreur est survenue. Réessayez');
     } else {
         const body = await response.text();
         const data = JSON.parse(body);
@@ -53,6 +64,11 @@ select.addEventListener('change', async () => {
                 div.appendChild(divPrice);
                 catalog.appendChild(div);
             });
+            if(data['nextPage']) {
+                next.href = '/get-products-by-category/' + categoryId + '/2';
+                navigationPage.appendChild(next);
+                console.log(next);
+            }
         } else {
             while(catalog.firstChild) {
                 catalog.removeChild(catalog.firstChild);
@@ -60,6 +76,7 @@ select.addEventListener('change', async () => {
             let div = document.createElement('div');
             div.id = 'notFound';
             let alert = document.createElement('h2');
+            alert.style.textAlign = "center";
             alert.textContent = 'Pas de produits pour cette catégorie';
             let image = document.createElement('img');
             image.src = '../assets/notFound.png';

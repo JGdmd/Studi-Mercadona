@@ -28,7 +28,6 @@ class FileUploader
 
     public function upload(UploadedFile $file, string $fileName): string
     {
-        $imageName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($fileName);
         $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
 
