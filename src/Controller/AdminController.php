@@ -119,12 +119,11 @@ class AdminController extends AbstractController {
 
         try {
             if($productForm->isSubmitted() && $productForm->isValid()) {
-
                 // Si le formulaire est valide, on vient faire la validation de l'image
-
-                $image = $productForm->get('imageFile')->getData();
+                
+                $image = $productForm->get('image')->getData();
                 $imageName = $fileUploader->upload($image, $product->getCategory());
-
+                
                 if($imageName !== null) {
                     $product->setImage($imageName);
                     $entityManager->persist($product);
@@ -153,6 +152,7 @@ class AdminController extends AbstractController {
                 }
             }
         } catch(DriverException $e) {
+            dd($e);
             $flasher->addError('Une erreur s\'est produite. Produit non enregistrée.');
         }
 
@@ -221,6 +221,11 @@ class AdminController extends AbstractController {
         }
 
         $seller = new Seller();
+
+        $plainPassword = Functions::generatePassword();
+        $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
+        $seller->setPassword($hashpassword);
+        
         $sellerForm = $this->createForm(SellerType::class, $seller);
 
         $sellerForm->handleRequest($request);
@@ -229,9 +234,7 @@ class AdminController extends AbstractController {
 
         try {
             if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
-                $plainPassword = Functions::generatePassword($seller);
-                $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
-                $seller->setPassword($hashpassword);
+
                 $entityManager->persist($seller);
                 $entityManager->flush();
                 $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);

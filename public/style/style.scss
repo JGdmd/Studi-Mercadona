@@ -99,6 +99,14 @@
     }
   }
 
+  .whiteBox {
+    background-color: white;
+    margin: 0 auto;
+    width: 50%;
+    height: fit-content;
+    box-shadow: rgba(0, 0, 0, 0.16) 7px 8px 4px 0px;
+  }
+
   .background-landing {
     background-image: url('../assets/mercadona_background_phone.jpeg');
     background-size: cover;
@@ -140,11 +148,11 @@
     left: 50%;
     transform: translate(-50%, -50%);  
     width: 70%;
-    height: 30%;
+    height: fit-content;
     min-height: 185px;
     max-width: 350px;
-    min-width: 250px;
-    padding: 10px;
+    min-width: 280px;
+    padding: 15px;
     background: rgba(255, 255, 255, 0.4);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -571,6 +579,7 @@
   margin: 0 auto;
   gap: 10px;
   @include responsive(Wide) {
+    width: 80%;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 0;

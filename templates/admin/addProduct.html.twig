@@ -7,7 +7,7 @@
         {{ form_widget(productForm.price, { 'attr' : {'class' : 'input', 'placeholder' : 'Prix', 'min': 0}, 'html5': true}) }}
         {{ form_widget(productForm.unit, { 'attr' : {'class' : 'input select', 'placeholder' : 'Unité du produit' }}) }}
         {{ form_widget(productForm.category, { 'attr' : {'class' : 'input select', 'placeholder' : 'Catégorie associée' }}) }}
-        {{ form_widget(productForm.imageFile, { 'attr' : {'class' : 'input', 'placeholder' : 'Image Produit', 'accept' : 'image/jpeg, image/jpg', 'id' : '#fileReader'}}) }}
+        {{ form_widget(productForm.image, { 'attr' : {'class' : 'input', 'placeholder' : 'Image Produit', 'accept' : 'image/jpeg, image/jpg', 'id' : '#fileReader'}}) }}
         {{ form_widget(productForm.submit, { 'attr' : {'class' : 'btn bg-green' }} )}}
     {{ form_end(productForm) }}
     <img id="output"/>
