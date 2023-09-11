@@ -1,4 +1,4 @@
-  let fileReader = document.getElementById('product_imageFile');
+  let fileReader = document.getElementById('product_image');
   let output = document.getElementById('output');
 
   fileReader.addEventListener('change', (e) => {

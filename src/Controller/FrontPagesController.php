@@ -23,6 +23,16 @@ class FrontPagesController extends AbstractController {
         ]);
     }
 
+    // Page d'accueil
+    #[Route('/legalNotices', name:'legalNotices')]
+    public function legalNoticesDisplay()
+    {
+        return $this->render('legalNotices.html.twig',
+        [
+            'title' => 'Mentions Légales',
+        ]);
+    }
+
     // Catalogue avec 12 produits par page
     #[Route('/catalog/{page}', name:'catalog',
     condition: "params['page'] > 0")]
@@ -65,6 +75,10 @@ class FrontPagesController extends AbstractController {
                 $discount = ($product->getPrice()) - ($product->getPrice() * $discount[0]->getDiscount() / 100);
             }
 
+            // On formatte les produits pour l'affichage en TWIG
+            $productsFormat[$product->getId()] = $this->formatProduct($product, $discount);
+        }
+
         // Pour chaque catégorie, on récupère le label et l'id
         $categoriesFormat = [];
         $i = 0;
@@ -72,9 +86,7 @@ class FrontPagesController extends AbstractController {
             $categoriesFormat[$i] = ['label' => $category->getLabel(), 'id' => $category->getId()];
             $i++;
         }
-            // On formatte les produits pour l'affichage en TWIG
-            $productsFormat[$product->getId()] = $this->formatProduct($product, $discount);
-        }
+        
         return $this->render('catalog.html.twig',
         [
             'title' => 'Catalogue',

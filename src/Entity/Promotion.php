@@ -16,24 +16,34 @@ class Promotion
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Assert\Positive]
-    private ?float $discount = null;
+    #[Assert\Range(
+        min: 1,
+        max: 99,
+        notInRangeMessage: 'Le pourcentage de promotion doit être compris entre 1% et 99%',
+    )]
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private float $discount;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     /**
      * @var string A "Y-m-d" formatted value
      * */
-    private $begins = null;
+    private $begins;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     /**
      * @var string A "Y-m-d" formatted value
      */
-    private $ends = null;
+    private $ends;
 
     #[ORM\ManyToOne(inversedBy: 'promotions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Product $product = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private Product $product;
 
     public function getId(): ?int
     {

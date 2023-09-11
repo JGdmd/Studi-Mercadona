@@ -38,7 +38,7 @@ class Functions {
         return substr(preg_replace("/[^a-zA-Z0-9]/", "", base64_encode(Functions::getRandomBytes($length+1))),0,$length);
     }
     
-    static function generatePassword(Seller $seller) {
+    static function generatePassword() {
         // On génére automatiquement le mot de passe
         // Etape 1 : On obtient un string aléatoire à l'aide d'une chaine de 32 bytes.
         $password = Functions::generateRandomString(12);
@@ -46,6 +46,10 @@ class Functions {
         for($i = 0; $i <= 3; $i++) {
             $randNumber = rand(1,14);
             $password = substr_replace($password, Functions::generateSpecialCharacter(), $randNumber, 0);
+        }
+        $match = preg_match('#^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!$@*/&]).{12,}$#', $password);
+        if(!$match) {
+            $password = static::generatePassword();
         }
 
         // On retourne le mot de passe pour l'insérer dans le mail.

@@ -1,0 +1,24 @@
+{% extends 'admin/_dashboard.html.twig' %}
+{% block context %}
+   <h1 class="f-upper fw fs-2 f-orange">
+   Paramètres
+   </h1>
+   <div class="form-admin">
+        <a href="{{ path('newPass') }}" class="btn bg-white f-black">Nouveau mot de passe</a>
+        <a href="{{ path('newAdmin') }}" class="btn bg-white f-black">Ajouter vendeur</a>
+        <a href="#ticketPopup" class="btn bg-orange f-black">Contacter le support</a>
+        <a href="{{ path('app_logout') }}" class="btn bg-green">Se déconnecter</a>
+   </div>
+   <div id="ticketPopup" class="overlay">
+	<div class="popup">
+		<h2>Ticket au support</h2>
+		<a class="close" href="#">&times;</a>
+		<div class="content">
+            {{ form_start(ticket, { 'attr' : {'class' : 'form-admin' }}) }}
+                {{ form_widget(ticket.content, { 'attr' : {'class' : 'input input-area', 'placeholder' : 'Motif du ticket (Exhaustif)' }}) }}
+                {{ form_widget(ticket.submit, { 'attr' : {'class' : 'btn bg-green' }} )}}
+            {{ form_end(ticket) }}
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Constraints\Date;
@@ -84,7 +85,7 @@ class AdminController extends AbstractController {
                  on regarde pourquoi et on affiche un message en conséquence */
 
             } elseif ($categoryForm->isSubmitted() && $categoryForm->isValid() == false) {
-                if(count($errors) > 0) {
+                if($errors->count() > 0) {
                     $errorMessage = $errors->get(0)->getMessage();
                         $flasher->addError($errorMessage);
                 } else {
@@ -119,12 +120,11 @@ class AdminController extends AbstractController {
 
         try {
             if($productForm->isSubmitted() && $productForm->isValid()) {
-
                 // Si le formulaire est valide, on vient faire la validation de l'image
-
-                $image = $productForm->get('imageFile')->getData();
+                
+                $image = $productForm->get('image')->getData();
                 $imageName = $fileUploader->upload($image, $product->getCategory());
-
+                
                 if($imageName !== null) {
                     $product->setImage($imageName);
                     $entityManager->persist($product);
@@ -138,7 +138,7 @@ class AdminController extends AbstractController {
                 /* Si le formulaire n'a pas respecté les contraintes imposés par l'entity, 
                  on regarde pourquoi et on affiche un message en conséquence */
 
-                if(count($errors) > 0) {
+                if($errors->count() > 0) {
                     $errorMessage = $errors->get(0)->getMessage();
                         $flasher->addError($errorMessage);
                 } else {
@@ -153,6 +153,7 @@ class AdminController extends AbstractController {
                 }
             }
         } catch(DriverException $e) {
+            dd($e);
             $flasher->addError('Une erreur s\'est produite. Produit non enregistrée.');
         }
 
@@ -192,7 +193,7 @@ class AdminController extends AbstractController {
                     $flasher->addError('Une promotion ou plusieurs sont programées : ' . date_format($existingBegins, 'd/m/Y') . ' => ' . date_format($existingEnds, 'd/m/Y'));
                 }
             } elseif ($discountForm->isSubmitted() && $discountForm->isValid() == false) {
-                if(count($errors) > 0) {
+                if($errors->count() > 0) {
                     $errorMessage = $errors->get(0)->getMessage();
                         $flasher->addError($errorMessage);
                 } else {
@@ -221,6 +222,11 @@ class AdminController extends AbstractController {
         }
 
         $seller = new Seller();
+
+        $plainPassword = Functions::generatePassword();
+        $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
+        $seller->setPassword($hashpassword);
+        
         $sellerForm = $this->createForm(SellerType::class, $seller);
 
         $sellerForm->handleRequest($request);
@@ -229,16 +235,20 @@ class AdminController extends AbstractController {
 
         try {
             if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
-                $plainPassword = Functions::generatePassword($seller);
-                $hashpassword = $userPasswordHasherInterface->hashPassword($seller,$plainPassword);
-                $seller->setPassword($hashpassword);
-                $entityManager->persist($seller);
-                $entityManager->flush();
-                $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
-                $flasher->addSuccess('Administrateur enregistré. Mot de passe envoyé par mail.');
+
+                try {
+                    $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
+                    $entityManager->persist($seller);
+                    $entityManager->flush();
+                    $flasher->addSuccess('Administrateur enregistré. Mot de passe envoyé par mail.');
+                } catch(TransportException $e) {
+                    $flasher->addError('Une erreur s\'est produite. Administrateur non enregistré.');
+                    dd($e);
+                }
+
     
             } elseif ($sellerForm->isSubmitted() && $sellerForm->isValid() == false) {
-                if(count($errors) > 0) {
+                if($errors->count() > 0) {
                     $errorMessage = $errors->get(0)->getMessage();
                         $flasher->addError($errorMessage);
                 } else {

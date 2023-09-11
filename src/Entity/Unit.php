@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UnitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UnitRepository::class)]
 class Unit
@@ -14,7 +15,9 @@ class Unit
     private ?int $id = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $label = null;
+    #[Assert\Length(max: 55)]
+    #[Assert\NotBlank()]
+    private string $label;
 
     public function getId(): ?int
     {

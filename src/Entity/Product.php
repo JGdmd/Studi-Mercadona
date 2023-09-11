@@ -20,33 +20,55 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 55, unique: true)]
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
     #[Assert\Length(
         max: 55,
         maxMessage: 'Le label ne peut être que de 55 caractères maximum',
     )]
-    private ?string $label = null;
+    private string $label;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
     #[Assert\Length(
         max: 255,
         maxMessage: 'La description produit ne peut être que de 255 caractères maximum',
     )]
-    private ?string $description = null;
+    private string $description;
     
     #[ORM\Column]
-    private ?float $price = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    #[Assert\Range(
+        min: 0.01,
+        notInRangeMessage: 'Un produit ne peut être en dessous de 0,01€'
+    )]
+    private float $price;
     
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Category $category = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private Category $category;
     
     #[ORM\Column(length: 255)]
-    private ?string $image = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private string $image;
 
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Unit $unit = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private Unit $unit;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: Promotion::class)]
     private Collection $promotions;

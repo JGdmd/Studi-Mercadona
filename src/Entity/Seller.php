@@ -19,6 +19,9 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 13, unique: true)]
+    #[Assert\NotBlank(
+        message: '{{ label }} ne peut être vide'
+    )]
     #[Assert\Length(
         exactly: 13,
         exactMessage: 'Le code employé est de 13 caractères'
@@ -28,7 +31,7 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
         match: true,
         message: 'Ce code n\'est pas un code employé',
     )]
-    private ?string $code = null;
+    private string $code;
 
     #[ORM\Column]
     private array $roles = ['ROLE_ADMIN'];
@@ -37,9 +40,15 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
+    private string $password;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
     #[Assert\Length(
         max: 255,
         maxMessage: 'Adresse email trop longue'
@@ -47,7 +56,7 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(
         message: 'Le mail {{ value }} n\'est pas une adresse valide.',
     )]
-    private ?string $email = null;
+    private string $email;
 
     public function getId(): ?int
     {

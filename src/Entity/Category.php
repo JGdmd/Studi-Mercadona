@@ -17,11 +17,14 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 55, unique: true)]
+    #[Assert\NotBlank(
+        message: "Le '{{label}}' ne peut être vide."
+    )]
     #[Assert\Length(
         max: 50,
-        maxMessage: 'Le label ne peut être que de 55 caractères maximum',
+        maxMessage: 'Le label ne peut être que de 50 caractères maximum',
     )]
-    private ?string $label = null;
+    private string $label;
 
     public function getId(): ?int
     {
