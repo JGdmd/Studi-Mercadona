@@ -1,0 +1,40 @@
+{% extends 'admin/_dashboard.html.twig' %}
+{% block context %}
+   <h1 class="f-upper fw fs-2">Appliquer une promotion</h1>
+    {{ form_start(discountForm, { 'attr' : {'class' : 'form-admin' }}) }}
+        {{ form_widget(discountForm.product, { 'attr' : {'class' : 'input select select-large', 'placeholder' : 'Produit promotionné'}}) }}
+        {{ form_widget(discountForm.discount, { 'attr' : {'class' : 'input', 'placeholder' : '% Remise', 'min': 0, 'step' : 0.5}, 'html5': true}) }}
+        <div id="info" class="f-green fw">
+        Avant promotion : <span id="before" class="f-orange"></span>
+            <span > / </span>
+        Après promotion : <span id="after" class="f-orange"></span>
+            
+        </div>
+        <div id="calendar">
+            <a href="#modal">
+                <img src="{{ asset('assets/icons/calendar.png') }}" alt="calendar" />
+            </a>
+        </div>
+        <div id="modal" class="modal-window">
+            <div>
+                <div class="modal-close">
+                    <a href="#" title="Close" class="">
+                        <img src="{{ asset('assets/icons/close.png') }}" alt="close">
+                    </a>
+                </div>
+                <span class="fw fs-1 f-green">Promotions existantes</span>
+                <ul class="list">
+                
+                </ul>
+                <br>
+            </div>
+        </div>
+        {{ form_widget(discountForm.begins, { 'attr' : {'class' : 'input js-date input-large', 'placeholder' : 'Début de promotion', 'inputmode' : 'none' }}) }}
+        {{ form_widget(discountForm.ends, { 'attr' : {'class' : 'input js-date input-large', 'placeholder' : 'Fin de promotion', 'inputmode' : 'none' }}) }}
+        {{ form_widget(discountForm.submit, { 'attr' : {'class' : 'btn bg-green' }} )}}
+    {{ form_end(discountForm) }}
+    <img id="output"/>
+
+{% endblock %}
+
+

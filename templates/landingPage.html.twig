@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+<div class="glassy-box">
+    <img src="{{ asset('assets/brand.png') }}" alt="logo" class="logo"/>
+    <h1 class="title">Des offres exclusives chaque jour !</h1>
+    <a class="btn btn-large bg-green" href="{{ path('catalog',{ page : 1}) }}">Catalogue</a>
+    <a class="btn btn-large bg-red" href="{{ path('legalNotices') }}">Mentions Légales</a>
+</div>
+{% endblock %}

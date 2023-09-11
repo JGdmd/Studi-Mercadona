@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+    {% include 'admin/_navbar.html.twig' %}
+    <main>
+    {% block context %}
+    {% endblock %}
+    </main>
+    {% include 'admin/_footer.html.twig' %}
+{% endblock %}

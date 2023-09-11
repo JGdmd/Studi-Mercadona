@@ -1,0 +1,39 @@
+<body style="background-color:#00AB61;display:flexbox;justify-content:center;align-items:center;height:fit-content;">
+    <div style="text-align:center;font-weight:bold;display:flexbox;justify-content:center;align-items:center;">
+        <img src="{{ email.image('@images/brand.png') }}" alt="Logo" style="background-color:white;width:300px;height:auto;margin:10px auto;">
+        {% if ticket is same as (false) %}
+            
+            {% if newPass is same as (false) %}
+            <h2>Bienvenue {{ code }} !</h2>
+                <p>
+                    Un vendeur vous a autorisé à accéder à l'application Mercadona.
+                </p>
+                <p>
+                    Pour vous y connecter, entrez votre code employé et le mot de passe ci-dessous :
+                </p>
+            {% else %}
+
+            <h2>Votre demande de nouveau mot de passe</h2>
+                <p>
+                    Lors de votre prochaine connexion, entrez votre code employé et le mot de passe ci-dessous :
+                </p>
+            {% endif %}
+
+            <p style="background-color:white;color:#FFA100;width:fit-content;margin-left:auto;margin-right:auto;padding:5px;">{{ password }}</p>
+
+            <p> à l'adresse <a href="https://studi-mercadona.devexploris.com/auth">/auth</a> de votre interface.</p>
+            <p>
+            Ne divulguez pas votre mot de passe, celui-ci est personnel.
+            </p>
+
+        {% else %}
+
+        <h2>Nouveau ticket de la part de {{ code }} !</h2>
+            <p>
+                {{ content }}
+            </p>
+        {% endif %}
+
+
+    </div>
+</body>

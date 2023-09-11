@@ -1,0 +1,11 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+get_product:
+    path: '/get-product/{id}'
+    controller: App\Controller\AdminController::getProduct
+get_product_by_category:
+    path: '/get-products-by-category-ajax/{id}'
+    controller: App\Controller\FrontPagesController::getProductsByCategoryAjax
