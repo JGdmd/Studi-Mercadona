@@ -2,35 +2,36 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Seller;
+use DateTimeImmutable;
 use App\Entity\Product;
-use App\Entity\Promotion;
-use App\Form\CategoryType;
-use App\Form\DiscountType;
-use App\Form\ProductType;
+use App\Entity\Category;
 use App\Form\SellerType;
 use App\Form\TicketType;
-use App\Repository\CategoryRepository;
-use App\Repository\ProductRepository;
-use App\Repository\PromotionRepository;
-use App\Repository\SellerRepository;
+use App\Entity\Promotion;
+use App\Form\ProductType;
+use App\Form\CategoryType;
+use App\Form\DiscountType;
+use Flasher\Prime\Flasher;
 use App\Services\Functions;
 use App\Services\FileUploader;
-use DateTimeImmutable;
-use Doctrine\DBAL\Exception\DriverException;
+use App\Repository\SellerRepository;
+use App\Repository\ProductRepository;
+use App\Repository\CategoryRepository;
+use App\Repository\PromotionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Flasher\Prime\Flasher;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\DBAL\Exception\DriverException;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 
 class AdminController extends AbstractController {
 
@@ -214,7 +215,7 @@ class AdminController extends AbstractController {
     // Ajout d'un nouvel admin
 
     #[Route('/admin/new-admin', name:'newAdmin')]
-    public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo)
+    public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo, GoogleAuthenticatorInterface $authenticator)
     {
         $users = $sellerRepo->findAll();
         $usersExists = [];
@@ -234,6 +235,11 @@ class AdminController extends AbstractController {
 
         $errors = $validator->validate($seller);
 
+        $secret = $authenticator->generateSecret();
+        
+        $seller->setGoogleAuthenticatorSecret($secret);
+        $seller->setEnable2FA(false);
+        
         try {
             try {
                 if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
@@ -241,7 +247,7 @@ class AdminController extends AbstractController {
                     $entityManager->persist($seller);
                     $entityManager->flush();
                     $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
-                    $flasher->addSuccess('Administrateur enregistré. Mot de passe envoyé par mail.');
+                    $flasher->addWarning('Administrateur enregistré. Mot de passe envoyé par mail. Paramétrage du 2FA à votre prochaine connexion.');
         
                 } elseif ($sellerForm->isSubmitted() && $sellerForm->isValid() == false) {
                     if(count($errors) > 0) {

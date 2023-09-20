@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SellerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -11,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SellerRepository::class)]
 #[UniqueEntity(fields: ['code'], message: 'Ce code est déjà utilisé.')]
-class Seller implements UserInterface, PasswordAuthenticatedUserInterface
+class Seller implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -36,6 +37,9 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = ['ROLE_ADMIN'];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $googleAuthenticatorSecret;
+
     /**
      * @var string The hashed password
      */
@@ -57,6 +61,9 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
         message: 'Le mail {{ value }} n\'est pas une adresse valide.',
     )]
     private string $email;
+
+    #[ORM\Column(options:["default" => false])]
+    private ?bool $enable2FA = null;
 
     public function getId(): ?int
     {
@@ -136,6 +143,38 @@ class Seller implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function isGoogleAuthenticatorEnabled(): bool
+    {
+        return null !== $this->googleAuthenticatorSecret;
+    }
+
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return $this->code;
+    }
+
+    public function getGoogleAuthenticatorSecret(): ?string
+    {
+        return $this->googleAuthenticatorSecret;
+    }
+
+    public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void
+    {
+        $this->googleAuthenticatorSecret = $googleAuthenticatorSecret;
+    }
+
+    public function isEnable2FA(): ?bool
+    {
+        return $this->enable2FA;
+    }
+
+    public function setEnable2FA(bool $enable2FA): static
+    {
+        $this->enable2FA = $enable2FA;
 
         return $this;
     }

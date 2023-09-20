@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="glassy-box">
+    <form method="post" action="/2fa_check" class="login-form">
+        <p class="info-form fs-2"><label for="_auth_code">Authentication Code :</label></p>
+            <input class="input"
+                id="_auth_code"
+                type="text"
+                name="_auth_code"
+                autocomplete="one-time-code"
+                placeholder="Votre code google"
+                autofocus/>
+
+        <button class="btn btn-small bg-green">Se connecter</button>
+        <a class="btn btn-small bg-red" href="/logout">Annuler</a>
+    </form>
+</div>
+{% endblock %}

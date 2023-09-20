@@ -9,3 +9,9 @@ get_product:
 get_product_by_category:
     path: '/get-products-by-category-ajax/{id}'
     controller: App\Controller\FrontPagesController::getProductsByCategoryAjax
+2fa_login:
+    path: /2fa
+    controller: App\Controller\SecurityController::check2fa
+
+2fa_login_check:
+    path: /2fa_check
