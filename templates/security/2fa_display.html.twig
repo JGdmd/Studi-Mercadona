@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="glassy-box">
+    <h1 class="title fs-1 f-black">Scanner ce QRCode à l'aide de Google Authenticator</h1>
+    <img id="imageQRcode" src="{{ qrCode }}" alt="QRcode" name="imageQRcode" width="150" height="150" />
+    <a class="btn btn-small bg-red" href="{{ path('app_login') }}">Connexion</a>
+</div>
+{% endblock %}

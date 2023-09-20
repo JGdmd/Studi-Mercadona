@@ -6,7 +6,7 @@
     <link href="{{ asset('style/style.css')}}" rel="stylesheet" />
     <link href="{{ asset('style/notifications.css')}}" rel="stylesheet" />
     <title>Mercadona - {{title }}</title>
-    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login')%}
+    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login' or app.request.attributes.get('_route') == '2fa_login')%}
     <style>
     body {
         overflow: hidden;
@@ -16,7 +16,7 @@
 </head>
 <body>
     
-    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login')%}
+    {% if (app.request.attributes.get('_route') == 'landingPage' or app.request.attributes.get('_route') == 'app_login') or app.request.attributes.get('_route') == '2fa_login'%}
         <div class="background-landing"></div>
     <header class="header-logo no-visible-desktop"><a href="{{ path('landingPage' )}}"/><img src="{{ asset('assets/brand.png') }}" alt="logo" /></a></header>
     {% else %}
