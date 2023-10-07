@@ -17,9 +17,11 @@ use App\Services\Functions;
 use App\Services\FileUploader;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
+use Symfony\Component\Mime\Part\File;
 use App\Repository\CategoryRepository;
 use App\Repository\PromotionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mime\Part\DataPart;
 use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AdminController extends AbstractController {
 
@@ -156,7 +159,6 @@ class AdminController extends AbstractController {
                 }
             }
         } catch(DriverException $e) {
-            dd($e);
             $flasher->addError('Erreur MER-001. Produit non enregistrée.');
         }
 
@@ -215,7 +217,7 @@ class AdminController extends AbstractController {
     // Ajout d'un nouvel admin
 
     #[Route('/admin/new-admin', name:'newAdmin')]
-    public function newAdminDisplay(Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo, GoogleAuthenticatorInterface $authenticator)
+    public function newAdminDisplay(ParameterBagInterface $parameterBag, Request $request, EntityManagerInterface $entityManager, Flasher $flasher, UserPasswordHasherInterface $userPasswordHasherInterface, ValidatorInterface $validator, SellerRepository $sellerRepo, GoogleAuthenticatorInterface $authenticator)
     {
         $users = $sellerRepo->findAll();
         $usersExists = [];
@@ -239,16 +241,16 @@ class AdminController extends AbstractController {
         
         $seller->setGoogleAuthenticatorSecret($secret);
         $seller->setEnable2FA(false);
-        
+        $projectDir = $parameterBag->get('kernel.project_dir');
         try {
             try {
                 if($sellerForm->isSubmitted() && $sellerForm->isValid()) {
     
                     $entityManager->persist($seller);
                     $entityManager->flush();
-                    $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword);
+                    $this->sendMail(mail: $seller->getEmail(), seller: $seller, password: $plainPassword, parameterBag: $projectDir);
                     $flasher->addWarning('Administrateur enregistré. Mot de passe envoyé par mail. Paramétrage du 2FA à votre prochaine connexion.');
-        
+                    return $this->redirectToRoute('newAdmin');
                 } elseif ($sellerForm->isSubmitted() && $sellerForm->isValid() == false) {
                     if(count($errors) > 0) {
                         $errorMessage = $errors->get(0)->getMessage();
@@ -434,13 +436,15 @@ class AdminController extends AbstractController {
 
     // Fonction d'envoi de mail pour mot de passe
 
-    private function sendMail(string $mail, Seller $seller, string $password)
+    private function sendMail(string $mail, Seller $seller, string $password, string $parameterBag)
     {
+
         $email = (new TemplatedEmail())
         ->from('admin@studi-mercadona.devexploris.com')
         ->to($mail)
         ->subject('Bienvenue chez Mercadona !')
         ->htmlTemplate('mail.html.twig')
+        ->addPart(new DataPart(new File($parameterBag.'/manual.pdf'), 'Manuel d\'utilisation Mercadona'))
         ->context([
             'newPass' => false,
             'ticket' => false,

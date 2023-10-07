@@ -4,7 +4,7 @@
    Paramètres
    </h1>
    <div class="form-admin">
-        <a href="{{ path('newPass') }}" class="btn bg-white f-black">Nouveau mot de passe</a>
+        <a href="#" class="btn bg-white f-black" id="newPassword">Nouveau mot de passe</a>
         <a href="{{ path('newAdmin') }}" class="btn bg-white f-black">Ajouter vendeur</a>
         <a href="#ticketPopup" class="btn bg-orange f-black">Contacter le support</a>
         <a href="{{ path('app_logout') }}" class="btn bg-green">Se déconnecter</a>
@@ -21,4 +21,14 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+    const btn = document.getElementById("newPassword");
+    btn.addEventListener('click', () => {
+        if (confirm('Voulez-vous recevoir un nouveau mot de passe par mail ? \n Cette action est irréversible.')) {
+            window.location.href = "/admin/newpassword";
+        } else {
+            return null;
+        }
+    })
+</script
 {% endblock %}
