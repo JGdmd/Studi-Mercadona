@@ -86,7 +86,7 @@ class AdminController extends AbstractController {
                 $entityManager->persist($category);
                 $entityManager->flush();
                 $flasher->addSuccess('La catégorie a bien été ajoutée');
-                
+                return $this->redirectToRoute('addCategory');
                 /* Si le formulaire n'a pas respecté les contraintes imposés par l'entity, 
                  on regarde pourquoi et on affiche un message en conséquence */
 
@@ -136,6 +136,7 @@ class AdminController extends AbstractController {
                     $entityManager->persist($product);
                     $entityManager->flush();
                     $flasher->addSuccess('Le produit a bien été ajouté');
+                    return $this->redirectToRoute('addProduct');
                 } else {
                     $flasher->addError('Une erreur est survenue avec le fichier. Réessayez.');
                 }
@@ -191,6 +192,7 @@ class AdminController extends AbstractController {
                     $entityManager->persist($discount);
                     $entityManager->flush();
                     $flasher->addSuccess('La promotion a bien été ajoutée');
+                    return $this->redirectToRoute('addDiscount');
                 } else {
                     $existingBegins = $isExist[0]->getBegins();
                     $existingEnds = end($isExist)->getEnds();
