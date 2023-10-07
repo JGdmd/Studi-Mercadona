@@ -1,0 +1,5 @@
+flasher:
+    themes:
+        flasher:
+            options:
+                darkMode: 'class'

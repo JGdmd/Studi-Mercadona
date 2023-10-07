@@ -2,14 +2,16 @@
 
 namespace App\Form;
 
-use App\Entity\Promotion;
 use App\Entity\Product;
+use App\Entity\Promotion;
+use App\Repository\ProductRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class DiscountType extends AbstractType
@@ -26,6 +28,10 @@ class DiscountType extends AbstractType
                         return ['disabled' => 'disabled'];
                     }
                     return [];
+                },
+                'query_builder' => function (ProductRepository $er): QueryBuilder {
+                    return $er->createQueryBuilder('p')
+                        ->orderBy('p.label', 'ASC');
                 },
             ])
             ->add('discount', NumberType::class, [
