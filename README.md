@@ -27,5 +27,3 @@ This is the sql code :
 - 5 => yourEmail => type your email
 - 6 => JASC3TP7AFYP4ZSBBPQ24FJVMPCBOLLWIUNN7VSFS444ADQHQVGA => Google Authenticator Code
 - 7 => false => It is for your first connexion at the application (when you flash the qrCode, this param switch to true)
-
-For testing the application deployed, you can test with this code : **MER-14789-001** / Pass : **Test12345** (**Do not forget** : when the qrcode is displayed, do not refresh the page before scan with the Google Authenticator Page)
