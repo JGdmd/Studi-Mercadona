@@ -13,6 +13,7 @@
                 Vous êtes identifié en tant que <br/> <span class="fs-1">{{ app.user.userIdentifier }}</span>
                 </p> 
                 <a href="{{ path('adminDashboard') }}" class="btn bg-green">Accès admin</a>
+                <a href="{{ path('export') }}" class="btn bg-orange" target="_blank">Export PDF</a>
                 <a href="{{ path('app_logout') }}" class="btn bg-red">Se déconnecter</a>
         {% else %}
         <input type="text" class="input" id="code" name="code" value="{{ last_username }}" placeholder="identifiant"/>

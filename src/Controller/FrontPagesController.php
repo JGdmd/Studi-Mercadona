@@ -44,15 +44,6 @@ class FrontPagesController extends AbstractController {
         // On calcul le nombre max de pages du catalogue
         $maxPage = count($totalProduct) / $productsPerPage + 1;
 
-        if($page > round($maxPage)) {
-            $page = 1;
-        }
-        if($page + 1 <= round($maxPage)) {
-            $next = $page + 1;
-        } else {
-            $next = null;
-        }
-
         // On calcul la page suivante et la page précédente
         $next = ($page < $maxPage) ? $page + 1 : null;
         $previous = ($page > 1) ? $page - 1 : null;
