@@ -14,6 +14,7 @@ use App\Form\CategoryType;
 use App\Form\DiscountType;
 use Flasher\Prime\Flasher;
 use App\Services\Functions;
+use Spipu\Html2Pdf\Html2Pdf;
 use App\Services\FileUploader;
 use App\Repository\SellerRepository;
 use App\Repository\ProductRepository;
@@ -26,6 +27,7 @@ use Doctrine\DBAL\Exception\DriverException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,8 +35,8 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 
 class AdminController extends AbstractController {
 
@@ -433,6 +435,34 @@ class AdminController extends AbstractController {
         }
         $flasher->addSuccess('Mot de passe changé, envoyé par mail');
         return $this->redirectToRoute('params');
+    }
+
+    #[Route('/admin/export', name:'export')]
+    public function exportPDF(ProductRepository $productRepository)
+    {
+        $products = $productRepository->findPromotedProductsByCategory();
+        $productsFormat = [];
+        foreach ($products as $product) {
+            $promotions = $product->getPromotions();
+            foreach ($promotions as $promotion) {
+                $newProduct = [];
+                $newProduct['label'] = $product->getLabel();
+                $newProduct['category'] = $product->getCategory()->getLabel();
+                $newProduct['description'] = substr($product->getDescription(),0,100);
+                $newProduct['price'] = $product->getPrice();
+                $newProduct['newPrice'] = ($product->getPrice() - ($product->getPrice() * $promotion->getDiscount()) / 100);
+                array_push($productsFormat, $newProduct);
+            }
+        }
+        $pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
+        $template = $this->renderView('export.html.twig', ['products' => $productsFormat]);
+        $pdf->pdf->SetDisplayMode('fullpage');
+        $pdf->writeHTML($template);
+        $response = new Response($pdf->output());
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="export.pdf"');
+    
+        return $response;
     }
 
 

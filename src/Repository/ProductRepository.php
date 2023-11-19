@@ -39,6 +39,19 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
+    public function findPromotedProductsByCategory()
+    {
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.promotions', 'promo')
+            ->andWhere('promo.begins <= :now')
+            ->andWhere('promo.ends >= :now OR promo.ends IS NULL')
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Product[] Returns an array of Product objects
 //     */
